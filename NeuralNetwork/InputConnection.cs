@@ -1,6 +1,6 @@
 ﻿namespace NeuralNetwork
 {
-    class InputConnection : Connection
+    public class InputConnection : Connection
     {
         private readonly Input _input;
 

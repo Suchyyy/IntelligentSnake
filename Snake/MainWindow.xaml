@@ -5,8 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Snake"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="480" Width="800">
     <Grid Background="Black">
-        <Canvas Name="GameScene" HorizontalAlignment="Stretch" Width="780" Height="410"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="410"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Canvas Name="GameScene" Grid.Row="0" HorizontalAlignment="Stretch" Width="780" Height="410" Grid.ColumnSpan="3" Margin="6,4,6,5"/>
+        <Label Name="LabelMovesLeft" Grid.Row="1" Grid.Column="0" Foreground="White" Content="Moves left: " HorizontalAlignment="Center"/>
+        <Label Name="LabelScore" Grid.Row="1" Grid.Column="1" Foreground="White" Content="Score: " HorizontalAlignment="Center"/>
+        <Label Name="LabelGeneration" Grid.Row="1" Grid.Column="2" Foreground="White" Content="Generation: " HorizontalAlignment="Center"/>
     </Grid>
 </Window>

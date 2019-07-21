@@ -1,6 +1,6 @@
 ﻿namespace NeuralNetwork
 {
-    class Connection
+    public class Connection
     {
         public double Weight { get; set; }
         private readonly Neuron _inputNeuron;

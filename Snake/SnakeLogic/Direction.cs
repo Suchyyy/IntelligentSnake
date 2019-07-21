@@ -3,12 +3,16 @@ using System.Linq;
 
 namespace Snake.SnakeLogic
 {
-    abstract class Direction
+    public abstract class Direction
     {
         public abstract int DirValue { get; }
         public abstract void Move(Node node, Board board);
         public abstract Node Previous(Node node);
-        public abstract List<double> GetDistances(Snake snake);
+
+        public List<double> GetDistances(Snake snake)
+        {
+            return new List<double>(new[] { UpperDistance(snake), BottomDistance(snake), LeftDistance(snake), RightDistance(snake) });
+        }
 
         public double UpperDistance(Snake snake)
         {
@@ -68,11 +72,6 @@ namespace Snake.SnakeLogic
         {
             return new Node { X = node.X, Y = node.Y + 1 };
         }
-
-        public override List<double> GetDistances(Snake snake)
-        {
-            return new List<double>(new[] { UpperDistance(snake), LeftDistance(snake), RightDistance(snake) });
-        }
     }
 
     class DirectionDown : Direction
@@ -91,11 +90,6 @@ namespace Snake.SnakeLogic
         public override Node Previous(Node node)
         {
             return new Node { X = node.X, Y = node.Y - 1 };
-        }
-
-        public override List<double> GetDistances(Snake snake)
-        {
-            return new List<double>(new[] { BottomDistance(snake), RightDistance(snake), LeftDistance(snake) });
         }
     }
 
@@ -116,11 +110,6 @@ namespace Snake.SnakeLogic
         {
             return new Node { X = node.X + 1, Y = node.Y };
         }
-
-        public override List<double> GetDistances(Snake snake)
-        {
-            return new List<double>(new[] { LeftDistance(snake), BottomDistance(snake), UpperDistance(snake) });
-        }
     }
 
     class DirectionRight : Direction
@@ -139,11 +128,6 @@ namespace Snake.SnakeLogic
         public override Node Previous(Node node)
         {
             return new Node { X = node.X - 1, Y = node.Y };
-        }
-
-        public override List<double> GetDistances(Snake snake)
-        {
-            return new List<double>(new[] { RightDistance(snake), UpperDistance(snake), BottomDistance(snake) });
         }
     }
 }

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NeuralNetwork
 {
-    class Layer
+    public class Layer
     {
         public List<Neuron> Neurons { get; }
 
@@ -16,5 +12,13 @@ namespace NeuralNetwork
         }
 
         public void AddNeuron(Neuron neuron) => Neurons.Add(neuron);
+
+        public void CalculateOutput()
+        {
+            foreach (var n in Neurons)
+            {
+                var t = n.Output;
+            }
+        }
     }
 }

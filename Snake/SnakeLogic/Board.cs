@@ -1,22 +1,9 @@
-﻿using System;
+﻿using GeneticAlgorithm;
 
 namespace Snake.SnakeLogic
 {
     public class Board
     {
-        private static readonly object Locker = new object();
-        private static Random _random;
-        public static Random Random
-        {
-            get
-            {
-                lock (Locker)
-                {
-                    return _random ?? (_random = new Random(DateTime.Now.Millisecond));
-                }
-            }
-        }
-
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -26,7 +13,7 @@ namespace Snake.SnakeLogic
         {
             Width = width;
             Height = height;
-            Fruit = new Node { X = Random.Next(Width), Y = Random.Next(Height) };
+            Fruit = new Node { X = Utils.Random.Next(Width), Y = Utils.Random.Next(Height) };
         }
 
         public bool IsFruitOnPlace(int x, int y)

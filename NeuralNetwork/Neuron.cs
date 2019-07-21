@@ -3,25 +3,13 @@ using System.Linq;
 
 namespace NeuralNetwork
 {
-    class Neuron
+    public class Neuron
     {
         private bool _isOutputSet;
         public List<Connection> Inputs { get; }
 
         private double _output;
-        public double Output
-        {
-            get
-            {
-                if (_isOutputSet) return _output;
-
-                var value = Inputs.Sum(conn => conn.GetOutput());
-                _output = Activation(value);
-                _isOutputSet = true;
-
-                return _output;
-            }
-        }
+        public double Output => GetOutput();
 
         public Neuron()
         {
@@ -36,6 +24,17 @@ namespace NeuralNetwork
         {
             if (value > 1.0) return 1.0;
             if (value < 1.0) return -1.0;
+            return _output;
+        }
+
+        public double GetOutput()
+        {
+            if (_isOutputSet) return _output;
+
+            var value = Inputs.Sum(conn => conn.GetOutput());
+            _output = Activation(value);
+            _isOutputSet = true;
+
             return _output;
         }
     }

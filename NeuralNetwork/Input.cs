@@ -1,6 +1,6 @@
 ﻿namespace NeuralNetwork
 {
-    class Input
+    public class Input
     {
         public double Value { get; set; }
 
