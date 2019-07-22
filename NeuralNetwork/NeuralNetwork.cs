@@ -14,7 +14,6 @@ namespace NeuralNetwork
             Inputs = new List<Input>();
 
             for (var i = 0; i < inputCount; i++) Inputs.Add(new Input(0.0));
-            AddInputLayer(inputCount);
         }
 
         public void SetInputValues(List<double> inputs)
@@ -27,25 +26,24 @@ namespace NeuralNetwork
             var layer = new Layer();
             Layers.Add(layer);
 
-            var prevLayer = Layers[Layers.Count - 2];
-            for (var i = 0; i < size; i++)
+            if (Layers.Count > 1)
             {
-                var neuron = new Neuron();
-                prevLayer.Neurons.ForEach(prevNeuron => neuron.Inputs.Add(new Connection(prevNeuron)));
-                layer.AddNeuron(neuron);
+                var prevLayer = Layers[Layers.Count - 2];
+                for (var i = 0; i < size; i++)
+                {
+                    var neuron = new Neuron();
+                    prevLayer.Neurons.ForEach(prevNeuron => neuron.Inputs.Add(new Connection(prevNeuron)));
+                    layer.AddNeuron(neuron);
+                }
             }
-        }
-
-        private void AddInputLayer(int size)
-        {
-            var layer = new Layer();
-            Layers.Add(layer);
-
-            for (var i = 0; i < size; i++)
+            else
             {
-                var neuron = new Neuron();
-                Inputs.ForEach(input => neuron.Inputs.Add(new InputConnection(input)));
-                layer.AddNeuron(neuron);
+                for (var i = 0; i < size; i++)
+                {
+                    var neuron = new Neuron();
+                    Inputs.ForEach(input => neuron.Inputs.Add(new InputConnection(input)));
+                    layer.AddNeuron(neuron);
+                }
             }
         }
 

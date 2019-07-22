@@ -5,9 +5,9 @@
         public Board Board { get; }
         public Snake Snake { get; }
 
-        public GameInstance(int boardWidth, int boardHeight, int snakeSize)
+        public GameInstance(int boardWidth, int boardHeight, int snakeSize, int seed)
         {
-            Board = new Board(boardWidth, boardHeight);
+            Board = new Board(boardWidth, boardHeight, seed);
             Snake = new Snake(snakeSize, Board);
         }
     }

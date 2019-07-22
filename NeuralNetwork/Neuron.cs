@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NeuralNetwork
@@ -22,9 +23,7 @@ namespace NeuralNetwork
 
         public double Activation(double value)
         {
-            if (value > 1.0) return 1.0;
-            if (value < 1.0) return -1.0;
-            return _output;
+            return 1.0 / (1.0 + Math.Exp(-value));
         }
 
         public double GetOutput()

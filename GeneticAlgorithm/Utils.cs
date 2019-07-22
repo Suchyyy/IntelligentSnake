@@ -4,15 +4,7 @@ namespace GeneticAlgorithm
 {
     public static class Utils
     {
-        private static readonly object Locker = new object();
-        private static Random _random;
-        public static Random Random
-        {
-            get
-            {
-                lock (Locker) { return _random ?? (_random = new Random(DateTime.Now.Millisecond)); }
-            }
-        }
+        public static Random Random { get; } = new Random(DateTime.Now.Millisecond);
 
         public static uint GetRandomUInt()
         {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GeneticAlgorithm.Mutations
 {
@@ -12,13 +13,13 @@ namespace GeneticAlgorithm.Mutations
 
         public override void MutatePopulation()
         {
-            foreach (var ch in Population)
+            Parallel.ForEach(Population, ch =>
             {
-                if (Utils.Random.NextDouble() > MutationProbability) continue;
+                if (Utils.Random.NextDouble() > MutationProbability) return;
 
                 var index = Utils.Random.Next(ch.Genome.Length * 32);
                 ch.Genome[index / 32][index % 32] = !ch.Genome[index / 32][index % 32];
-            }
+            });
         }
     }
 }

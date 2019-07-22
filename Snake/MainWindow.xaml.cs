@@ -13,7 +13,6 @@ using GeneticAlgorithm;
 using GeneticAlgorithm.Crossovers;
 using GeneticAlgorithm.Mutations;
 using GeneticAlgorithm.Selections;
-using MoreLinq;
 
 namespace Snake
 {
@@ -22,11 +21,16 @@ namespace Snake
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int _seed;
         private Algorithm _geneticAlgorithm;
         private GameObjects _gameObjects;
+        private int _delay;
 
         public MainWindow()
         {
+            _seed = DateTime.Now.Millisecond;
+            _delay = 8;
+
             InitializeComponent();
             InitializeGameElements(4);
 
@@ -39,13 +43,13 @@ namespace Snake
             {
                 var snakeList = new List<GameInstance>();
 
-                for (var i = 0; i < 2000; i++) snakeList.Add(new GameInstance(78, 41, 4));
+                for (var i = 0; i < 1000; i++) snakeList.Add(new GameInstance(77, 40, 4, _seed));
 
                 var genomeSize = 0;
                 snakeList[0].Snake.Brain.Layers.ForEach(layer => layer.Neurons.ForEach(neuron => genomeSize += neuron.Inputs.Count));
 
-                _geneticAlgorithm = new Algorithm(2000, genomeSize);
-                _geneticAlgorithm.Selection = new SelectionTournament(_geneticAlgorithm.Population, 20);
+                _geneticAlgorithm = new Algorithm(1000, genomeSize);
+                _geneticAlgorithm.Selection = new SelectionTournament(_geneticAlgorithm.Population, 100);
                 _geneticAlgorithm.Crossover = new TwoPointCrossover(_geneticAlgorithm.Population, 0.65);
                 _geneticAlgorithm.Mutation = new FlipBitMutation(_geneticAlgorithm.Population, 0.05);
 
@@ -62,6 +66,8 @@ namespace Snake
                                     .ForEach(connection => connection.Weight = c.weights[i++])));
                     }
 
+                    _delay = 8;
+                    var snake = snakeList[0];
                     while (true)
                     {
                         var snakes = snakeList.Where(instance => instance.Snake.MovesLeft > 0).ToList();
@@ -69,18 +75,18 @@ namespace Snake
 
                         if (snakes.Count == 0) break;
 
-                        var snake = snakes[0];
                         GameScene.Dispatcher.Invoke(() => RenderFrame(snake));
                         LabelMovesLeft.Dispatcher.Invoke(() => LabelMovesLeft.Content = $"Moves left: {snake.Snake.MovesLeft}");
                         LabelScore.Dispatcher.Invoke(() => LabelScore.Content = $"Score: {snake.Snake.Score}");
 
-                        Thread.Sleep(16);
+                        if (snake.Snake.MovesLeft > 0) Thread.Sleep(_delay);
                     }
 
+                    _seed = DateTime.Now.Millisecond;
                     foreach (var c in _geneticAlgorithm.Population.Select((chromosome, index) => new { index, chromosome }))
                     {
                         c.chromosome.Fitness = snakeList[c.index].Snake.Score;
-                        snakeList[c.index] = new GameInstance(78, 41, 4);
+                        snakeList[c.index] = new GameInstance(77, 40, 4, _seed);
                     }
 
                     _geneticAlgorithm.NextGeneration();
@@ -105,7 +111,7 @@ namespace Snake
             {
                 var snakeNodeEllipse = new Ellipse
                 {
-                    Fill = Brushes.ForestGreen,
+                    Fill = i == 0 ? Brushes.DarkGreen : Brushes.ForestGreen,
                     Width = 10,
                     Height = 10
                 };
@@ -122,21 +128,34 @@ namespace Snake
 
             for (var i = 0; i < gameInstance.Snake.Nodes.Count - _gameObjects.SnakeBody.Count; i++)
             {
-                var snakeNodeEllipse = new Ellipse
+                var ellipse = new Ellipse
                 {
                     Fill = Brushes.ForestGreen,
                     Width = 10,
                     Height = 10
                 };
 
-                _gameObjects.SnakeBody.Add(snakeNodeEllipse);
-                GameScene.Children.Add(snakeNodeEllipse);
+                _gameObjects.SnakeBody.Add(ellipse);
+                GameScene.Children.Add(ellipse);
+
+                Canvas.SetTop(ellipse, -100);
+                Canvas.SetLeft(ellipse, -100);
             }
 
-            foreach (var element in gameInstance.Snake.Nodes.Select((node, index) => new { node, ellipse = _gameObjects.SnakeBody[index] }))
+            for (var i = 0; i < _gameObjects.SnakeBody.Count; i++)
             {
-                Canvas.SetTop(element.ellipse, element.node.Y * 10);
-                Canvas.SetLeft(element.ellipse, element.node.X * 10);
+                var ellipse = _gameObjects.SnakeBody[i];
+                if (i < gameInstance.Snake.Nodes.Count)
+                {
+                    var node = gameInstance.Snake.Nodes[i];
+                    Canvas.SetTop(ellipse, node.Y * 10);
+                    Canvas.SetLeft(ellipse, node.X * 10);
+                }
+                else
+                {
+                    Canvas.SetTop(ellipse, -100);
+                    Canvas.SetLeft(ellipse, -100);
+                }
             }
         }
 
@@ -146,6 +165,10 @@ namespace Snake
             {
                 case Key.Space:
                     StartAlgorithm();
+                    break;
+
+                case Key.LeftCtrl:
+                    _delay = 1;
                     break;
             }
         }

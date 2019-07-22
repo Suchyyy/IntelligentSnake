@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 
 namespace GeneticAlgorithm.Crossovers
 {
@@ -10,8 +8,6 @@ namespace GeneticAlgorithm.Crossovers
         {
             CrossoverProbability = crossoverProbability;
             Population = population;
-            FirstGenome = new BitVector32[Population[0].Genome.Length];
-            SecondGenome = new BitVector32[Population[0].Genome.Length];
         }
 
         protected override void CrossChromosomes(Chromosome first, Chromosome second)
@@ -30,8 +26,11 @@ namespace GeneticAlgorithm.Crossovers
             {
                 var nthValue = i / 32;
                 var nthBit = i % 32;
-                FirstGenome[nthValue][nthBit] = i < r1 || i > r2 ? first.Genome[nthValue][nthBit] : second.Genome[nthValue][nthBit];
-                SecondGenome[nthValue][nthBit] = i < r1 || i > r2 ? second.Genome[nthValue][nthBit] : first.Genome[nthValue][nthBit];
+                var firstGenome = i < r1 || i > r2 ? first.Genome[nthValue][nthBit] : second.Genome[nthValue][nthBit];
+                var secondGenome = i < r1 || i > r2 ? second.Genome[nthValue][nthBit] : first.Genome[nthValue][nthBit];
+
+                first.Genome[nthValue][nthBit] = firstGenome;
+                second.Genome[nthValue][nthBit] = secondGenome;
             }
         }
     }

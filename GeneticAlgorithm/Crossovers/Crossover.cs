@@ -1,26 +1,19 @@
-﻿using System.Collections.Specialized;
-
-namespace GeneticAlgorithm.Crossovers
+﻿namespace GeneticAlgorithm.Crossovers
 {
     public abstract class Crossover : GeneticOperations
     {
         protected double CrossoverProbability;
-        protected BitVector32[] FirstGenome;
-        protected BitVector32[] SecondGenome;
 
         protected abstract void CrossChromosomes(Chromosome first, Chromosome second);
 
         public void CrossPopulation()
         {
-            foreach (var ch1 in Population)
+            for (var i = 0; i < Population.Count; i++)
             {
                 if (Utils.Random.NextDouble() > CrossoverProbability) continue;
 
-                Chromosome ch2;
-                do
-                {
-                    ch2 = Population[Utils.Random.Next(Population.Count)];
-                } while (ch2.Equals(ch1));
+                var ch1 = Population[Utils.Random.Next(Population.Count)];
+                var ch2 = Population[Utils.Random.Next(Population.Count)];
 
                 CrossChromosomes(ch1, ch2);
             }

@@ -17,7 +17,7 @@ namespace GeneticAlgorithm
             for (var i = 0; i < length; i++) Genome[i] = new BitVector32(Utils.Random.Next(int.MinValue, int.MaxValue));
         }
 
-        public List<double> GetWeights() => Genome.Select(value => (double)value.Data / int.MaxValue).ToList();
+        public List<double> GetWeights() => Genome.Select(value => value.Data / 1000000.0).ToList();
 
         public object Clone() => MemberwiseClone();
     }
