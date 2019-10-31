@@ -41,15 +41,16 @@ namespace Snake
         {
             Task.Run(() =>
             {
+                var populationSize = 500;
                 var snakeList = new List<GameInstance>();
 
-                for (var i = 0; i < 1000; i++) snakeList.Add(new GameInstance(77, 40, 4, _seed));
+                for (var i = 0; i < populationSize; i++) snakeList.Add(new GameInstance(77, 40, 4, _seed));
 
                 var genomeSize = 0;
                 snakeList[0].Snake.Brain.Layers.ForEach(layer => layer.Neurons.ForEach(neuron => genomeSize += neuron.Inputs.Count));
 
-                _geneticAlgorithm = new Algorithm(1000, genomeSize);
-                _geneticAlgorithm.Selection = new SelectionTournament(_geneticAlgorithm.Population, 100);
+                _geneticAlgorithm = new Algorithm(populationSize, genomeSize);
+                _geneticAlgorithm.Selection = new SelectionTournament(_geneticAlgorithm.Population, populationSize / 10);
                 _geneticAlgorithm.Crossover = new TwoPointCrossover(_geneticAlgorithm.Population, 0.65);
                 _geneticAlgorithm.Mutation = new FlipBitMutation(_geneticAlgorithm.Population, 0.05);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Snake.SnakeLogic
@@ -24,7 +25,7 @@ namespace Snake.SnakeLogic
 
         public Snake(int size, Board board)
         {
-            MovesLeft = 300;
+            MovesLeft = 500;
             Score = 0;
             Nodes = new List<Node>();
             Inputs = new List<double>(new double[12]);
@@ -41,9 +42,9 @@ namespace Snake.SnakeLogic
             }
 
             Brain = new NeuralNetwork.NeuralNetwork(12);
-            Brain.AddLayer(48);
-            Brain.AddLayer(24);
-            Brain.AddLayer(3);
+            Brain.AddLayer(60);
+            Brain.AddLayer(60);
+            Brain.AddLayer(4);
         }
 
         public void Move()
@@ -56,7 +57,9 @@ namespace Snake.SnakeLogic
             Brain.SetInputValues(Inputs);
 
             var results = Brain.GetResults();
-            Direction = Direction.ChangeDirection(results.IndexOf(results.Max()));
+            var index = results.Max() > 0.99 ? results.IndexOf(results.Max()) : -1;
+
+            Direction = Direction.ChangeDirection(index);
 
             for (var i = Nodes.Count - 1; i > 0; i--)
             {
@@ -72,9 +75,10 @@ namespace Snake.SnakeLogic
             Score++;
 
             if (head.X < 0 || head.Y < 0 || head.X >= _board.Width || head.Y >= _board.Height
-                || Nodes.Skip(1).Count(node => node.X == head.X && node.Y == head.Y) != 0)
+                || Nodes.Skip(3).Count(node => node.X == head.X && node.Y == head.Y) != 0)
             {
                 MovesLeft = 0;
+                Score -= 500;
                 return;
             }
 
@@ -82,7 +86,7 @@ namespace Snake.SnakeLogic
             {
                 Nodes.Add(Direction.Previous(head));
                 Score += 600;
-                MovesLeft += 301;
+                MovesLeft += 300;
 
                 var fruit = _board.Fruit;
                 do
@@ -95,21 +99,19 @@ namespace Snake.SnakeLogic
 
         private void CalculateDistances(Node head)
         {
-            Inputs[0] = head.Y == 0 ? 1 : 0;
-            Inputs[1] = head.X == 0 ? 1 : 0;
-            Inputs[2] = _board.Height - head.Y == 1 ? 1 : 0;
-            Inputs[3] = _board.Width - head.X == 1 ? 1 : 0;
+            Inputs[0] = head.X == 0 ? 1 : -1;
+            Inputs[1] = head.Y == 0 ? 1 : -1;
+            Inputs[2] = _board.Width - head.X == 1 ? 1 : -1;
+            Inputs[3] = _board.Height - head.Y == 1 ? 1 : -1;
 
-//            var possibleDirs = Direction.GetPossibleDirections();
-//            for (var i = 0; i < 4; i++) Inputs[i + 4] = possibleDirs[i];
+            var distances = _direction.GetBodyDistances(this);
+            for (var i = 0; i < 4; i++) Inputs[4 + i] = distances[i];
 
-            Inputs[4] = _board.Fruit.X == head.X ? _board.Fruit.Y.CompareTo(head.Y) : 0;
-            Inputs[5] = _board.Fruit.Y == head.Y ? _board.Fruit.X.CompareTo(head.X) : 0;
-            Inputs[6] = _board.Fruit.X == head.X ? 1 : 0;
-            Inputs[7] = _board.Fruit.Y == head.Y ? 1 : 0;
-
-            var distances = _direction.GetDistances(this);
-            for (var i = 0; i < 4; i++) Inputs[i + 8] = distances[i];
+            var fruit = _board.Fruit;
+            Inputs[8] = head.X < fruit.X ? 1 : -1;
+            Inputs[9] = head.Y < fruit.Y ? 1 : -1;
+            Inputs[10] = head.X > fruit.X ? 1 : -1;
+            Inputs[11] = head.Y > fruit.Y ? 1 : -1;
         }
 
         private bool IsValidPosition(Node node)

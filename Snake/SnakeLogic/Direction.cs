@@ -8,33 +8,57 @@ namespace Snake.SnakeLogic
         public abstract void Move(Node node, Board board);
         public abstract Node Previous(Node node);
 
-        public double[] GetDistances(Snake snake) => new[] { UpperDistance(snake), BottomDistance(snake), LeftDistance(snake), RightDistance(snake) };
+        public double[] GetBodyDistances(Snake snake) => new[] { UpperDistance(snake), BottomDistance(snake), LeftDistance(snake), RightDistance(snake) };
 
         public abstract double[] GetPossibleDirections();
-        public abstract Direction ChangeDirection(int value);
+
+        public Direction ChangeDirection(int value)
+        {
+            Direction d = null;
+
+            switch (value)
+            {
+                case 0:
+                    d = DirectionUp.Instance;
+                    break;
+                case 1:
+                    d = DirectionDown.Instance;
+                    break;
+                case 2:
+                    d = DirectionLeft.Instance;
+                    break;
+                case 3:
+                    d = DirectionRight.Instance;
+                    break;
+                default:
+                    return this;
+            }
+
+            return DirValue + d.DirValue != 0 ? d : this;
+        }
 
         public double UpperDistance(Snake snake)
         {
             var head = snake.Nodes.First();
-            return snake.Nodes.Skip(1).Count(node => node.X == head.X && node.Y + 1 == head.Y);
+            return snake.Nodes.Skip(3).Count(node => node.X == head.X && node.Y + 1 == head.Y) > 0 ? 1 : -1;
         }
 
         public double BottomDistance(Snake snake)
         {
             var head = snake.Nodes.First();
-            return snake.Nodes.Skip(1).Count(node => node.X == head.X && node.Y - 1 == head.Y);
+            return snake.Nodes.Skip(3).Count(node => node.X == head.X && node.Y - 1 == head.Y) > 0 ? 1 : -1;
         }
 
         public double LeftDistance(Snake snake)
         {
             var head = snake.Nodes.First();
-            return snake.Nodes.Skip(1).Count(node => node.Y == head.Y && node.X + 1 == head.X);
+            return snake.Nodes.Skip(3).Count(node => node.Y == head.Y && node.X + 1 == head.X) > 0 ? 1 : -1;
         }
 
         public double RightDistance(Snake snake)
         {
             var head = snake.Nodes.First();
-            return snake.Nodes.Skip(1).Count(node => node.Y == head.Y && node.X - 1 == head.X);
+            return snake.Nodes.Skip(3).Count(node => node.Y == head.Y && node.X - 1 == head.X) > 0 ? 1 : -1;
         }
     }
 
@@ -50,22 +74,7 @@ namespace Snake.SnakeLogic
 
         public override Node Previous(Node node) => new Node { X = node.X, Y = node.Y + 1 };
 
-        public override double[] GetPossibleDirections() => new[] { 1.0, 0.0, 1.0, 1.0 };
-
-        public override Direction ChangeDirection(int value)
-        {
-            switch (value)
-            {
-                case 0:
-                    return DirectionUp.Instance;
-                case 1:
-                    return DirectionLeft.Instance;
-                case 2:
-                    return DirectionRight.Instance;
-            }
-
-            return DirectionUp.Instance;
-        }
+        public override double[] GetPossibleDirections() => new[] { 1.0, -1.0, 1.0, 1.0 };
     }
 
     class DirectionDown : Direction
@@ -80,22 +89,8 @@ namespace Snake.SnakeLogic
 
         public override Node Previous(Node node) => new Node { X = node.X, Y = node.Y - 1 };
 
-        public override double[] GetPossibleDirections() => new[] { 0.0, 1.0, 1.0, 1.0 };
+        public override double[] GetPossibleDirections() => new[] { -1.0, 1.0, 1.0, 1.0 };
 
-        public override Direction ChangeDirection(int value)
-        {
-            switch (value)
-            {
-                case 0:
-                    return DirectionDown.Instance;
-                case 1:
-                    return DirectionRight.Instance;
-                case 2:
-                    return DirectionLeft.Instance;
-            }
-
-            return DirectionDown.Instance;
-        }
     }
 
     class DirectionLeft : Direction
@@ -110,22 +105,7 @@ namespace Snake.SnakeLogic
 
         public override Node Previous(Node node) => new Node { X = node.X + 1, Y = node.Y };
 
-        public override double[] GetPossibleDirections() => new[] { 1.0, 1.0, 1.0, 0.0 };
-
-        public override Direction ChangeDirection(int value)
-        {
-            switch (value)
-            {
-                case 0:
-                    return DirectionLeft.Instance;
-                case 1:
-                    return DirectionDown.Instance;
-                case 2:
-                    return DirectionUp.Instance;
-            }
-
-            return DirectionLeft.Instance;
-        }
+        public override double[] GetPossibleDirections() => new[] { 1.0, 1.0, 1.0, -1.0 };
     }
 
     class DirectionRight : Direction
@@ -140,21 +120,6 @@ namespace Snake.SnakeLogic
 
         public override Node Previous(Node node) => new Node { X = node.X - 1, Y = node.Y };
 
-        public override double[] GetPossibleDirections() => new[] { 1.0, 1.0, 0.0, 1.0 };
-
-        public override Direction ChangeDirection(int value)
-        {
-            switch (value)
-            {
-                case 0:
-                    return DirectionRight.Instance;
-                case 1:
-                    return DirectionUp.Instance;
-                case 2:
-                    return DirectionDown.Instance;
-            }
-
-            return DirectionRight.Instance;
-        }
+        public override double[] GetPossibleDirections() => new[] { 1.0, 1.0, -1.0, 1.0 };
     }
 }
