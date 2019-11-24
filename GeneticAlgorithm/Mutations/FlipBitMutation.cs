@@ -15,7 +15,7 @@ namespace GeneticAlgorithm.Mutations
         {
             Parallel.ForEach(Population, ch =>
             {
-                if (Utils.Random.NextDouble() > MutationProbability) return;
+                if (Utils.Random.NextDouble() < MutationProbability) return;
 
                 var index = Utils.Random.Next(ch.Genome.Length * 32);
                 ch.Genome[index / 32][index % 32] = !ch.Genome[index / 32][index % 32];
