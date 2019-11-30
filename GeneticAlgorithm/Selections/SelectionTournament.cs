@@ -32,7 +32,11 @@ namespace GeneticAlgorithm.Selections
                 NewPopulation[i] = tournament.MaxBy(ch => ch.Fitness).First();
             });
 
-            NewPopulation.AsParallel().ForEach((chromosome, index) => Population[index] = (Chromosome)chromosome.Clone());
+            NewPopulation.ForEach((chromosome, index) =>
+            {
+                Population[index] = chromosome.Clone();
+                Population[index].Fitness = 0;
+            });
         }
     }
 }

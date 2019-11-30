@@ -12,17 +12,37 @@ namespace GeneticAlgorithm.Crossovers
 
         protected override void CrossChromosomes(Chromosome first, Chromosome second)
         {
-            var index = Utils.Random.Next(first.Genome.Length * 32);
+            var genomeLength = first.Genome.Length * 32;
+            var start = 0;
+            var end = Utils.Random.Next(first.Genome.Length);
 
-            for (var i = 0; i < first.Genome.Length * 32; i++)
+            if (end > genomeLength * 0.5)
             {
-                var nthValue = i / 32;
-                var nthBit = i % 32;
-                var firstGenome = i < index ? first.Genome[nthValue][nthBit] : second.Genome[nthValue][nthBit];
-                var secondGenome = i < index ? second.Genome[nthValue][nthBit] : first.Genome[nthValue][nthBit];
+                // same result, less iterations
+                start = end - 1;
+                end = genomeLength;
+            }
 
-                first.Genome[nthValue][nthBit] = firstGenome;
-                second.Genome[nthValue][nthBit] = secondGenome;
+            for (var i = start; i < end; i++)
+            {
+                var gen = i / 32;
+                var bit = i - gen * 32;
+
+                if (bit == 0 && (end / 32) != gen)
+                {
+                    var genome = first.Genome[gen];
+                    first.Genome[gen] = second.Genome[gen];
+                    second.Genome[gen] = genome;
+
+                    i += 31;
+                }
+                else
+                {
+                    var mask = 1 << bit;
+
+                    first.Genome[gen][mask] = second.Genome[gen][mask];
+                    second.Genome[gen][mask] = first.Genome[gen][mask];
+                }
             }
         }
     }

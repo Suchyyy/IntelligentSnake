@@ -12,25 +12,37 @@ namespace GeneticAlgorithm.Crossovers
 
         protected override void CrossChromosomes(Chromosome first, Chromosome second)
         {
-            var r1 = Utils.Random.Next(first.Genome.Length * 32);
-            var r2 = Utils.Random.Next(first.Genome.Length * 32);
+            var genomeLength = first.Genome.Length * 32;
+            var start = 0;
+            var end = Utils.Random.Next(first.Genome.Length);
 
-            if (r1 > r2)
+            if (end > genomeLength * 0.5)
             {
-                var tmp = r1;
-                r1 = r2;
-                r2 = tmp;
+                // same result, less iterations
+                start = end - 1;
+                end = genomeLength;
             }
 
-            for (var i = 0; i < first.Genome.Length * 32; i++)
+            for (var i = start; i < end; i++)
             {
-                var nthValue = i / 32;
-                var nthBit = i % 32;
-                var firstGenome = i < r1 || i > r2 ? first.Genome[nthValue][nthBit] : second.Genome[nthValue][nthBit];
-                var secondGenome = i < r1 || i > r2 ? second.Genome[nthValue][nthBit] : first.Genome[nthValue][nthBit];
+                var gen = i / 32;
+                var bit = i - gen * 32;
 
-                first.Genome[nthValue][nthBit] = firstGenome;
-                second.Genome[nthValue][nthBit] = secondGenome;
+                if (bit == 0 && (end / 32) != gen)
+                {
+                    var genome = first.Genome[gen];
+                    first.Genome[gen] = second.Genome[gen];
+                    second.Genome[gen] = genome;
+
+                    i += 31;
+                }
+                else
+                {
+                    var mask = 1 << bit;
+
+                    first.Genome[gen][mask] = second.Genome[gen][mask];
+                    second.Genome[gen][mask] = first.Genome[gen][mask];
+                }
             }
         }
     }

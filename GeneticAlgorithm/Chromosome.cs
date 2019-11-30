@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GeneticAlgorithm
 {
-    public class Chromosome : ICloneable
+    public class Chromosome
     {
         public BitVector32[] Genome { get; }
         public double Fitness { get; set; }
@@ -19,6 +19,12 @@ namespace GeneticAlgorithm
 
         public List<double> GetWeights() => Genome.Select(value => value.Data / 1000000.0).ToList();
 
-        public object Clone() => MemberwiseClone();
+        public Chromosome Clone()
+        {
+            Chromosome c = new Chromosome(Genome.Length) { Fitness = Fitness };
+            for (int i = 0; i < Genome.Length; i++) c.Genome[i] = new BitVector32(Genome[i]);
+
+            return c;
+        }
     }
 }
