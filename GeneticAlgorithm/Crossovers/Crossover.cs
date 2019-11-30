@@ -10,7 +10,7 @@
         {
             for (var i = 0; i < Population.Count; i++)
             {
-                if (Utils.Random.NextDouble() < CrossoverProbability) continue;
+                if (Utils.Random.NextDouble() > CrossoverProbability) continue;
 
                 var ch1 = Population[Utils.Random.Next(Population.Count)];
                 var ch2 = Population[Utils.Random.Next(Population.Count)];
